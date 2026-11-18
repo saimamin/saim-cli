@@ -1,0 +1,64 @@
+{
+  "name": "saim-cli",
+  "productName": "Saim CLI",
+  "version": "1.0.0",
+  "description": "The Saim CLI - a complete graphical desktop for your command line, with an integrated OpenCode panel.",
+  "keywords": [
+    "saim",
+    "cli",
+    "terminal",
+    "gui",
+    "desktop",
+    "opencode"
+  ],
+  "main": "src/main.js",
+  "author": "Saim",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "icons": "node tools/make-icons.js",
+    "rebuild": "electron-rebuild -f -w node-pty",
+    "postinstall": "electron-rebuild -f -w node-pty",
+    "pack": "electron-builder --dir --linux",
+    "dist": "electron-builder --linux AppImage --publish never"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/addon-ligatures": "^0.10.0",
+    "@xterm/addon-webgl": "^0.18.0",
+    "@xterm/xterm": "^5.5.0",
+    "node-pty": "^1.0.0",
+    "safety-agent": "^0.1.7",
+    "superagent-ai": "^0.0.20",
+    "systeminformation": "^5.23.8"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-rebuild": "^3.2.9",
+    "node-gyp": "^11.5.0"
+  },
+  "build": {
+    "appId": "dev.saim.cli",
+    "productName": "Saim CLI",
+    "asar": true,
+    "compression": "normal",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "media/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Development",
+      "icon": "media",
+      "artifactName": "Saim-CLI-${version}-${arch}.${ext}"
+    }
+  }
+}

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="color-scheme" content="light">
+<title>Saim CLI</title>
+<style>
+  :root, [data-theme="apple"] {
+    --bg-0:#f5f5f7; --bg-1:#ffffff; --bg-2:#e9e9ee; --bg-3:#dcdce3;
+    --fg-0:#1d1d1f; --fg-1:#48484d; --fg-2:#77777d; --fg-3:#a1a1a8;
+    --accent:#0071e3; --accent-dim:rgba(0,113,227,0.12); --accent-line:rgba(0,113,227,0.4);
+    --ok:#2f9e5c; --warn:#e8930c; --danger:#e5484d;
+    --radius:18px; --radius-sm:12px;
+    --font-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI",Roboto,sans-serif;
+    --font-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    color-scheme:light;
+  }
+  [data-theme="night"] {
+    --bg-0:#0b0d12; --bg-1:#161a22; --bg-2:#1c212c; --bg-3:#232838;
+    --fg-0:#e8ecf4; --fg-1:#a8b2c2; --fg-2:#77818f; --fg-3:#4f5766;
+    --accent:#7c8cff; --accent-dim:rgba(124,140,255,0.16); --accent-line:rgba(124,140,255,0.45);
+    --ok:#4ade80; --warn:#ffb454; --danger:#ff6b81;
+    color-scheme:dark;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; }
+  body {
+    font-family:var(--font-ui); background:var(--bg-0); color:var(--fg-0);
+    display:flex; flex-direction:column;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .screen { display:none; flex:1; min-height:0; flex-direction:column; }
+  .screen.is-active { display:flex; }
+  header.appbar {
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:calc(10px + env(safe-area-inset-top)) 16px 10px;
+    background:var(--bg-1); border-bottom:1px solid var(--bg-3);
+  }
+  .brand { display:flex; align-items:center; gap:8px; font-weight:700; letter-spacing:1.5px; font-size:14px; }
+  .logo { width:26px; height:26px; border-radius:8px; background:var(--accent); display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:800; }
+  .pills { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+  .pill { font-size:10.5px; padding:3px 9px; border-radius:999px; border:1px solid var(--bg-3); color:var(--fg-2); background:var(--bg-0); white-space:nowrap; }
+  .pill.is-accent { border-color:var(--accent-line); color:var(--accent); background:var(--accent-dim); }
+  .dot { width:8px; height:8px; border-radius:50%; background:var(--fg-3); display:inline-block; }
+  .dot.is-on { background:var(--ok); box-shadow:0 0 8px var(--ok); }
+  .dot.is-busy { background:var(--warn); box-shadow:0 0 8px var(--warn); }
+
+  .card { margin:14px 16px; padding:20px; border-radius:var(--radius); background:var(--bg-1); box-shadow:0 4px 14px rgba(0,0,0,0.06); }
+  .card h1 { font-size:20px; font-weight:700; margin-bottom:6px; }
+  .card p.sub { font-size:12.5px; color:var(--fg-2); line-height:1.6; margin-bottom:14px; }
+  label { display:block; font-size:10.5px; letter-spacing:1.2px; text-transform:uppercase; color:var(--fg-2); margin:12px 0 5px; font-weight:600; }
+  input, textarea {
+    width:100%; border:1px solid var(--bg-3); border-radius:var(--radius-sm); background:var(--bg-0);
+    color:var(--fg-0); padding:11px 12px; font-size:14px; font-family:var(--font-ui); outline:none;
+  }
+  input:focus, textarea:focus { border-color:var(--accent); }
+  textarea { resize:none; min-height:44px; font-family:var(--font-ui); }
+  .btn {
+    width:100%; margin-top:14px; padding:12px; border:none; border-radius:var(--radius-sm);
+    background:var(--accent); color:#fff; font-size:14.5px; font-weight:600; font-family:var(--font-ui);
+  }
+  .btn.ghost { background:var(--bg-2); color:var(--fg-0); }
+  .btn:disabled { opacity:0.5; }
+  .row { display:flex; gap:8px; } .row > * { flex:1; }
+  .err { color:var(--danger); font-size:12px; margin-top:8px; min-height:14px; }
+
+  #chatList { flex:1; min-height:0; overflow-y:auto; padding:10px 12px 4px; }
+  .msg { max-width:86%; margin:8px 0; padding:10px 13px; border-radius:var(--radius); background:var(--bg-1); font-size:13.5px; line-height:1.55; word-break:break-word; box-shadow:0 2px 8px rgba(0,0,0,0.05); }
+  .msg.user { margin-left:auto; background:var(--accent); color:#fff; border-bottom-right-radius:6px; }
+  .msg.assistant { border-bottom-left-radius:6px; }
+  .msg .who { font-size:9.5px; letter-spacing:1.2px; text-transform:uppercase; color:var(--fg-2); margin-bottom:4px; font-weight:700; }
+  .msg.user .who { color:rgba(255,255,255,0.75); }
+  .msg pre { font-family:var(--font-mono); font-size:12px; white-space:pre-wrap; }
+
+  .composer { padding:10px 12px calc(10px + env(safe-area-inset-bottom)); background:var(--bg-1); border-top:1px solid var(--bg-3); }
+  .composer .bar { display:flex; gap:8px; align-items:flex-end; }
+  .composer textarea { flex:1; border-radius:14px; }
+  .send { width:44px; height:44px; border-radius:14px; border:none; background:var(--accent); color:#fff; font-size:17px; flex:none; }
+  .send:disabled { opacity:0.4; }
+
+  .drawer {
+    position:fixed; inset:0; z-index:20; display:none;
+    background:rgba(0,0,0,0.3); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  }
+  .drawer.open { display:block; }
+  .drawer .sheet {
+    position:absolute; top:0; bottom:0; left:0; width:min(82vw, 320px);
+    background:var(--bg-1); padding:calc(14px + env(safe-area-inset-top)) 12px 14px; overflow-y:auto;
+    border-radius:0 18px 18px 0; box-shadow:8px 0 30px rgba(0,0,0,0.15);
+  }
+  .sheet h2 { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--fg-2); margin:10px 4px 8px; }
+  .sheet .item { padding:10px 12px; border-radius:var(--radius-sm); font-size:13px; color:var(--fg-0); margin-bottom:2px; }
+  .sheet .item.is-active { background:var(--accent-dim); color:var(--accent); font-weight:600; }
+  .sheet .item small { display:block; color:var(--fg-2); font-size:10.5px; }
+  .sheet .del { float:right; color:var(--danger); font-weight:700; padding:0 4px; }
+</style>
+</head>
+<body>
+
+  <!-- CONNECT SCREEN — same flow as desktop: pair (POST /api/pair -> GET /auth/connect/{code}) or manual URL+password -->
+  <div class="screen is-active" id="screen-connect">
+    <header class="appbar">
+      <div class="brand"><span class="logo">S</span>SAIM&nbsp;CLI</div>
+      <div class="pills"><button class="pill" id="themeToggle">Theme</button></div>
+    </header>
+    <div class="card">
+      <h1>Connect to your PC</h1>
+      <p class="sub">Run <b>Saim CLI</b> on your computer, open the OpenCode panel → <b>Pair</b>, then enter the server address and pairing code here — exactly like the desktop flow.</p>
+      <label>Server address</label>
+      <input id="inUrl" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="http://192.168.1.5:49374">
+      <label>Pairing code (or leave empty to use password)</label>
+      <input id="inCode" autocapitalize="off" autocomplete="one-time-code" spellcheck="false" placeholder="6-digit code from the desktop app">
+      <label>…or server password</label>
+      <input id="inPw" type="password" autocapitalize="off" spellcheck="false" placeholder="opencode server password">
+      <button class="btn" id="btnConnect">Connect</button>
+      <div class="err" id="connectErr"></div>
+    </div>
+  </div>
+
+  <!-- CHAT SCREEN -->
+  <div class="screen" id="screen-chat">
+    <header class="appbar">
+      <div class="brand"><span class="logo" id="menuBtn">≡</span><span class="dot" id="statusDot"></span>&nbsp;<span id="headerTitle" style="font-size:12.5px; font-weight:600;">OpenCode</span></div>
+      <div class="pills">
+        <button class="pill is-accent" id="pillAgent">build</button>
+        <button class="pill" id="pillModel">model</button>
+        <button class="pill" id="themeToggle2">◐</button>
+      </div>
+    </header>
+    <div id="chatList"></div>
+    <div class="composer">
+      <div class="bar">
+        <textarea id="promptBox" rows="1" placeholder="Message OpenCode… (delivery: steer)"></textarea>
+        <button class="send" id="btnSend">➤</button>
+      </div>
+    </div>
+    <div class="drawer" id="drawer">
+      <div class="sheet">
+        <h2>Sessions</h2>
+        <div id="sessionList"></div>
+        <button class="btn ghost" id="btnNewSession">+ New session</button>
+        <h2>Agent</h2>
+        <div id="agentList"></div>
+        <h2>Model</h2>
+        <div id="modelList"></div>
+        <h2>Connection</h2>
+        <button class="btn ghost" id="btnDisconnect">Disconnect</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+"use strict";
+(function () {
+  // ------------------------------------------------------------ state
+  const S = {
+    base: localStorage.getItem("saim.server") || "",
+    password: localStorage.getItem("saim.password") || "",
+    sessionId: localStorage.getItem("saim.session") || null,
+    agent: localStorage.getItem("saim.agent") || "build",
+    model: localStorage.getItem("saim.model") || null,
+    sessions: [], agents: [], models: [], messages: [], sending: false
+  };
+
+  const $ = id => document.getElementById(id);
+  const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+  // ------------------------------------------------------------ auth + api (same shapes as the desktop panel)
+  function headers() {
+    const h = { "Content-Type": "application/json" };
+    if (S.password) h["Authorization"] = "Basic " + btoa("opencode:" + S.password);
+    return h;
+  }
+  async function api(method, path, body) {
+    const res = await fetch(S.base + path, {
+      method, headers: headers(),
+      body: body === undefined ? undefined : JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(method + " " + path + " -> " + res.status);
+    return res.json();
+  }
+  const unwrap = d => (d && (d.data !== undefined ? d.data : d)) || d;
+
+  // ------------------------------------------------------------ screens
+  function show(name) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.toggle("is-active", s.id === "screen-" + name));
+  }
+
+  // Pair exactly like the desktop flow: the PC generated POST /api/pair and
+  // shows a code; the phone exchanges that code via GET /auth/connect/{code}.
+  async function connect(url, code, pw) {
+    S.base = url.replace(/\/+$/, "");
+    if (code && code.trim()) {
+      const r = await fetch(S.base + "/auth/connect/" + encodeURIComponent(code.trim()));
+      if (!r.ok) throw new Error("pairing rejected (" + r.status + ")");
+      const d = await r.json().catch(() => ({}));
+      const dd = unwrap(d) || {};
+      S.password = dd.password || dd.token || dd.secret || (typeof dd === "string" ? dd : "") || S.password;
+    } else if (pw && pw.trim()) {
+      S.password = pw.trim();
+    }
+    if (!S.password) throw new Error("no password resolved from pairing");
+    // Verify with a cheap authenticated call, same basic-auth as desktop.
+    await api("GET", "/api/session");
+    localStorage.setItem("saim.server", S.base);
+    localStorage.setItem("saim.password", S.password);
+  }
+
+  // ------------------------------------------------------------ chat
+  async function loadSessions() {
+    S.sessions = unwrap(await api("GET", "/api/session")) || [];
+    if (!Array.isArray(S.sessions)) S.sessions = Object.values(S.sessions);
+    if (!S.sessionId && S.sessions.length) openSession(S.sessions[0].id || S.sessions[0].sessionID);
+    renderSessions();
+  }
+  async function loadMeta() {
+    try {
+      S.agents = unwrap(await api("GET", "/api/agent")) || [];
+      const raw = unwrap(await api("GET", "/api/model")) || [];
+      S.models = Array.isArray(raw) ? raw : Object.values(raw);
+      renderAgents(); renderModels();
+    } catch (e) { /* best effort */ }
+  }
+  async function loadMessages() {
+    if (!S.sessionId) return;
+    S.messages = unwrap(await api("GET", "/api/session/" + S.sessionId + "/message")) || [];
+    renderMessages();
+  }
+  async function openSession(id) {
+    S.sessionId = id;
+    localStorage.setItem("saim.session", id || "");
+    S.messages = [];
+    renderSessions(); renderMessages();
+    await loadMessages();
+  }
+  async function newSession() {
+    const d = unwrap(await api("POST", "/api/session", {}));
+    const id = d && (d.id || d.sessionID);
+    if (id) { await loadSessions(); await openSession(id); }
+    $("drawer").classList.remove("open");
+  }
+  async function send() {
+    const box = $("promptBox");
+    const text = box.value.trim();
+    if (!text || S.sending || !S.sessionId) return;
+    S.sending = true; box.value = ""; setBusy(true);
+    S.messages.push({ type: "user", payload: { text } });
+    renderMessages();
+    try {
+      await api("POST", "/api/session/" + S.sessionId + "/prompt", { text, delivery: "steer" });
+      for (let i = 0; i < 25; i++) {
+        await new Promise(r => setTimeout(r, 1000));
+        S.messages = unwrap(await api("GET", "/api/session/" + S.sessionId + "/message")) || [];
+        renderMessages();
+        const last = S.messages[S.messages.length - 1];
+        if (last && (last.type === "assistant" || last.type === "idle")) break;
+      }
+    } catch (e) { pushLocalError(String(e.message || e)); }
+    S.sending = false; setBusy(false);
+  }
+  function pushLocalError(text) {
+    S.messages.push({ type: "user", error: true, payload: { text: "⚠ " + text } });
+    renderMessages();
+  }
+  function setBusy(on) {
+    $("btnSend").disabled = on;
+    $("statusDot").className = "dot" + (on ? " is-busy" : " is-on");
+  }
+
+  // ------------------------------------------------------------ rendering
+  function msgRole(m) { return m.type === "user" ? "user" : "assistant"; }
+  function msgText(m) {
+    const p = m.payload || m;
+    if (typeof p === "string") return p;
+    if (p.text) return p.text;
+    const parts = (p.parts || p.content || []);
+    return parts.map(x => (typeof x === "string" ? x : (x.text || (x.type === "text" ? x.text : "")))).join("");
+  }
+  function renderMessages() {
+    const list = $("chatList");
+    list.innerHTML = S.messages.map(m => {
+      const role = msgRole(m);
+      const txt = msgText(m);
+      return '<div class="msg ' + role + (m.error ? '" style="background:var(--danger);color:#fff' : '') + '">'
+        + '<div class="who">' + (role === "user" ? "you" : "opencode") + '</div>'
+        + '<pre>' + esc(txt) + '</pre></div>';
+    }).join("") || '<div style="text-align:center;color:var(--fg-2);font-size:12px;margin-top:38px">No messages yet — say something to OpenCode.</div>';
+    list.scrollTop = list.scrollHeight;
+  }
+  function renderSessions() {
+    $("sessionList").innerHTML = S.sessions.map(s => {
+      const id = s.id || s.sessionID;
+      const title = esc(s.title || id || "session");
+      return '<div class="item' + (id === S.sessionId ? " is-active" : "") + '" data-id="' + esc(id) + '">'
+        + '<span class="del" data-del="' + esc(id) + '">✕</span>' + title
+        + '<small>' + esc((s.updatedAt ? new Date(s.updatedAt).toLocaleString() : "")) + '</small></div>';
+    }).join("") || '<div class="item" style="color:var(--fg-2)">No sessions yet</div>';
+  }
+  function renderAgents() {
+    $("agentList").innerHTML = S.agents.map(a => {
+      const id = a.id || a.name; const label = a.name || a.id;
+      return '<div class="item' + (id === S.agent ? " is-active" : "") + '" data-agent="' + esc(id) + '">' + esc(label) + '</div>';
+    }).join("") || '<div class="item" style="color:var(--fg-2)">build (default)</div>';
+    $("pillAgent").textContent = S.agent;
+  }
+  function renderModels() {
+    $("modelList").innerHTML = S.models.slice(0, 60).map(m => {
+      const id = m.id || m; const pid = m.providerID || (typeof m === "string" ? id.split("/")[0] : "");
+      return '<div class="item" data-model="' + esc(pid ? pid + "/" + id : id) + '">' + esc((m.name || id)) + '<small>' + esc(pid) + '</small></div>';
+    }).join("") || '<div class="item" style="color:var(--fg-2)">default model</div>';
+    if (S.model) $("pillModel").textContent = S.model.split("/").pop();
+  }
+
+  // ------------------------------------------------------------ events
+  $("btnConnect").addEventListener("click", async () => {
+    const err = $("connectErr"); err.textContent = "Connecting…";
+    try {
+      await connect($("inUrl").value, $("inCode").value, $("inPw").value);
+      err.textContent = "";
+      enterChat();
+    } catch (e) { err.textContent = "⚠ " + (e.message || e); }
+  });
+  async function enterChat() {
+    show("chat");
+    $("statusDot").className = "dot is-on";
+    $("headerTitle").textContent = "OpenCode · " + (S.base.replace(/^https?:\/\//, "").slice(0, 26));
+    await loadSessions();
+    await loadMeta();
+    if (S.sessionId) await loadMessages();
+  }
+  $("menuBtn").addEventListener("click", () => $("drawer").classList.add("open"));
+  $("drawer").addEventListener("click", e => {
+    if (e.target === $("drawer")) { $("drawer").classList.remove("open"); return; }
+    const del = e.target.closest("[data-del]");
+    if (del) { api("DELETE", "/api/session/" + del.dataset.del).then(loadSessions).catch(() => {}); return; }
+    const ses = e.target.closest(".item[data-id]");
+    if (ses) { openSession(ses.dataset.id); $("drawer").classList.remove("open"); return; }
+    const ag = e.target.closest("[data-agent]");
+    if (ag) { S.agent = ag.dataset.agent; localStorage.setItem("saim.agent", S.agent); if (S.sessionId) api("POST", "/api/session/" + S.sessionId + "/agent", { agent: S.agent }).catch(() => {}); renderAgents(); return; }
+    const mo = e.target.closest("[data-model]");
+    if (mo) {
+      S.model = mo.dataset.model; localStorage.setItem("saim.model", S.model);
+      const parts = S.model.split("/");
+      const ref = parts.length > 1 ? { providerID: parts[0], id: parts.slice(1).join("/") } : { providerID: "opencode", id: S.model };
+      if (S.sessionId) api("POST", "/api/session/" + S.sessionId + "/model", { model: ref }).catch(() => {});
+      renderModels(); $("drawer").classList.remove("open"); return;
+    }
+  });
+  $("btnNewSession").addEventListener("click", newSession);
+  $("btnDisconnect").addEventListener("click", () => {
+    localStorage.removeItem("saim.server"); localStorage.removeItem("saim.password");
+    location.reload();
+  });
+  $("btnSend").addEventListener("click", send);
+  $("promptBox").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    localStorage.setItem("saim.theme", t);
+  }
+  function toggleTheme() {
+    applyTheme(document.documentElement.getAttribute("data-theme") === "night" ? "apple" : "night");
+  }
+  $("themeToggle").addEventListener("click", toggleTheme);
+  $("themeToggle2").addEventListener("click", toggleTheme);
+
+  // ------------------------------------------------------------ boot (same auto-flow as desktop)
+  applyTheme(localStorage.getItem("saim.theme") || "apple");
+  (async function boot() {
+    $("inUrl").value = S.base;
+    if (S.base && S.password) {
+      try { await api("GET", "/api/session"); enterChat(); return; } catch (e) { /* fall through */ }
+    }
+    show("connect");
+  })();
+})();
+</script>
+</body>
+</html>

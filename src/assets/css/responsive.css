@@ -1,0 +1,173 @@
+/* ==========================================================================
+   Saim CLI - responsive layout (tablet + mobile)
+   Desktop keeps the three-column workbench; below 1024px the side panels
+   become off-canvas sheets and the workspace takes the full width.
+   ========================================================================== */
+
+.scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 38;
+    background: rgba(12, 14, 18, 0.34);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    opacity: 1;
+    transition: opacity 0.16s ease;
+}
+.scrim[hidden] { display: none; }
+
+/* ------------------------------- tablet --------------------------------- */
+
+@media (max-width: 1024px) {
+    :root { --sidebar-w: 240px; --dock-w: 360px; }
+
+    .workbench,
+    .workbench.no-sidebar,
+    .workbench.with-dock,
+    .workbench.no-sidebar.with-dock {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(0, 1fr);
+    }
+
+    .center { border-left: none; border-right: none; }
+
+    /* left panel slides in over the workspace */
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: var(--titlebar-h);
+        bottom: var(--statusbar-h);
+        width: min(84vw, 320px);
+        z-index: 40;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        border-right: 1px solid var(--line);
+        box-shadow: 12px 0 40px rgba(0, 0, 0, 0.18);
+        transform: translateX(-104%);
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
+    }
+    .app.sidebar-open .sidebar { transform: translateX(0); }
+
+    /* right dock becomes a sheet */
+    .dock {
+        position: fixed;
+        right: 0;
+        top: var(--titlebar-h);
+        bottom: var(--statusbar-h);
+        width: min(88vw, 420px);
+        z-index: 40;
+        border-radius: var(--radius) 0 0 var(--radius);
+        border-left: 1px solid var(--line);
+        box-shadow: -12px 0 40px rgba(0, 0, 0, 0.18);
+        transform: translateX(104%);
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
+    }
+    .app.dock-open .dock { transform: translateX(0); }
+
+    /* statusbar gets dense */
+    .statusbar { padding: 0 10px; }
+    .status__item:nth-child(n + 6) { display: none; }
+}
+
+/* ------------------------------- mobile --------------------------------- */
+
+@media (max-width: 768px) {
+    :root { --titlebar-h: 44px; --radius: 16px; --radius-sm: 11px; }
+
+    .titlebar { padding: 0 8px; gap: 6px; }
+    .titlebar__brand { gap: 6px; }
+    .brand__version { display: none; }
+    .titlebar__tabs { display: none; }
+    .titlebar__actions { gap: 0; }
+
+    .ws__bar { padding: 0 6px; gap: 4px; }
+    .ws__seg { flex: 1; }
+    .wstab { padding: 0 9px; font-size: 11px; }
+    .wstab span { display: none; }
+    .wstab.is-active span { display: inline; }
+    .ws__chatbtn { padding: 0 8px; }
+
+    /* file picker + browser start pages breathe less */
+    .ws__filedrop { padding: 18px; }
+    .ws__filedrop h2 { font-size: 15px; }
+    .browser__start { padding: 18px 14px; }
+    .browser__start h2 { font-size: 17px; }
+    .browser__links { gap: 6px; }
+    .browser__links button { padding: 7px 11px; font-size: 11px; }
+    .browser__note { display: none; }
+
+    /* review stacks: file list on top, diff below */
+    .review__body { flex-direction: column; }
+    .review__files {
+        width: 100%;
+        max-height: 34%;
+        border-right: none;
+        border-bottom: 1px solid var(--line-soft);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        padding: 6px;
+    }
+    .review__file {
+        width: auto;
+        max-width: 100%;
+        border-radius: 8px;
+        padding: 5px 9px;
+        background: var(--bg-2);
+    }
+    .review__meta { display: none; }
+
+    /* statusbar: keep the essentials */
+    #st-process, #st-cpu, #st-mem, #st-net { display: none; }
+    .statusbar { font-size: 10px; }
+
+    /* chat header: drop the endpoint pill to protect the title */
+    .oc__pill--url { display: none; }
+
+    /* sheets go full-bleed */
+    .sidebar { width: min(88vw, 340px); top: var(--titlebar-h); }
+    .dock { width: min(94vw, 460px); top: var(--titlebar-h); }
+
+    .palette { width: calc(100vw - 24px); max-width: none; }
+    .modal { width: calc(100vw - 24px); max-width: none; }
+}
+
+/* ------------------------------ small phone ----------------------------- */
+
+@media (max-width: 480px) {
+    :root { --wsbar-h: 40px; }
+    .ws__bar { height: 40px; }
+    .oc__pills .oc__pill:not(:last-child) { display: none; }
+    .wstab { padding: 0 8px; height: 24px; }
+    .wstab.is-active span { display: none; }
+    .review__head { height: 32px; padding: 0 8px; }
+    .review__branch { font-size: 10px; padding: 2px 6px; }
+    .browser__bar { gap: 2px; padding: 5px 6px; }
+    .browser__bar #browser-back,
+    .browser__bar #browser-forward { display: none; }
+    .browser__url { height: 26px; font-size: 11px; }
+    .browser__go { padding: 0 10px; height: 26px; }
+
+    .sidebar__nav { padding: 5px 6px; }
+    .navitem { padding: 0 7px; }
+    .navitem__label { display: none; }
+
+    #st-cwd { display: none; }
+}
+
+/* ---------------------- pointer / touch refinements --------------------- */
+
+@media (hover: none) {
+    .navitem, .wstab, .docktab, .minibtn, .ghostbtn { -webkit-tap-highlight-color: transparent; }
+    .ws__seg { scroll-behavior: smooth; }
+    .tree__row { height: 30px; }
+    .navitem { height: 28px; }
+}
+
+/* Keep the workspace usable when the on-screen keyboard is open */
+@supports (height: 100dvh) {
+    .app { height: 100dvh; }
+    .sidebar, .dock { max-height: calc(100dvh - var(--titlebar-h) - var(--statusbar-h)); }
+    .sidebar__body { overscroll-behavior: contain; }
+}

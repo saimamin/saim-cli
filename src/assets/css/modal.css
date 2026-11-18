@@ -1,0 +1,213 @@
+/* ==========================================================================
+   Saim CLI - modals & settings
+   ========================================================================== */
+
+.overlay--modal { align-items: center; padding-top: 0; }
+
+.modal {
+    width: min(760px, 92vw);
+    max-height: 84vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: palette-in 0.14s ease;
+}
+
+.modal--sm { width: min(460px, 92vw); }
+
+.modal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+}
+.modal__title {
+    font-size: 14px;
+    letter-spacing: 1.6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--fg-0);
+}
+.modal__sub { font-size: 11px; color: var(--fg-3); margin-top: 3px; letter-spacing: 0; text-transform: none; font-weight: 400; }
+
+.modal__body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 6px 18px 18px;
+}
+
+.modal__foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--line);
+    background: var(--bg-1);
+}
+
+/* ----------------------------- settings -------------------------------- */
+
+.settings-nav {
+    display: flex;
+    gap: 4px;
+    padding: 12px 18px 0;
+    flex-wrap: wrap;
+}
+.settings-nav button {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    color: var(--fg-2);
+    border: 1px solid transparent;
+}
+.settings-nav button:hover { color: var(--fg-0); background: var(--bg-3); }
+.settings-nav button.is-active {
+    color: var(--accent);
+    background: var(--accent-dim);
+    border-color: var(--accent-line);
+}
+
+.setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line-soft);
+}
+.setting:last-child { border-bottom: none; }
+.setting__label { font-size: 12.5px; color: var(--fg-0); }
+.setting__desc { font-size: 10.5px; color: var(--fg-3); margin-top: 2px; max-width: 380px; line-height: 1.5; }
+.setting__control { flex: none; min-width: 190px; display: flex; justify-content: flex-end; }
+
+.field {
+    height: 28px;
+    min-width: 180px;
+    padding: 0 9px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    color: var(--fg-0);
+    font-size: 12px;
+    outline: none;
+    user-select: text;
+}
+.field:focus { border-color: var(--accent-line); box-shadow: 0 0 0 2px var(--accent-dim); }
+select.field { cursor: pointer; }
+
+.switch {
+    position: relative;
+    width: 38px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--bg-4);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--fg-2);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+.switch.is-on { background: var(--accent-dim); border-color: var(--accent-line); }
+.switch.is-on::after { transform: translateX(18px); background: var(--accent); }
+
+.range { width: 170px; accent-color: var(--accent); cursor: pointer; }
+
+.swatch {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.swatch button {
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    box-shadow: 0 0 0 1px var(--line);
+}
+.swatch button.is-active { border-color: var(--fg-0); }
+
+.shortcut-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.shortcut-table td { padding: 7px 4px; border-bottom: 1px solid var(--line-soft); color: var(--fg-1); }
+.shortcut-table td:last-child { text-align: right; color: var(--fg-3); font-family: var(--font-mono); font-size: 11px; }
+
+.about { text-align: center; padding: 26px 10px 10px; }
+.about__logo {
+    width: 82px;
+    height: 82px;
+    margin: 0 auto 16px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 40px rgba(49, 224, 198, 0.28);
+    position: relative;
+}
+.about__logo::after {
+    content: "";
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    width: 20px;
+    height: 20px;
+    border-left: 3px solid var(--accent);
+    border-bottom: 3px solid var(--accent);
+    transform: skewX(-18deg);
+    box-shadow: 22px 22px 0 -3px var(--accent);
+}
+.about h2 { margin: 0 0 4px; font-size: 20px; letter-spacing: 5px; font-weight: 400; }
+.about p { margin: 0 0 18px; color: var(--fg-2); font-size: 12px; }
+.about__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 20px;
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: left;
+    font-size: 11.5px;
+}
+.about__meta div { display: flex; justify-content: space-between; color: var(--fg-2); }
+.about__meta span:last-child { color: var(--fg-0); font-family: var(--font-mono); font-size: 11px; }
+
+/* ---------------------------- context menu ------------------------------ */
+
+.contextmenu {
+    position: fixed;
+    z-index: 950;
+    min-width: 190px;
+    padding: 5px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--bg-3);
+    box-shadow: var(--shadow-md);
+    animation: palette-in 0.1s ease;
+}
+
+.contextmenu__item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--fg-1);
+    cursor: pointer;
+}
+.contextmenu__item:hover { background: var(--accent-dim); color: var(--fg-0); }
+.contextmenu__item.is-danger:hover { background: rgba(255, 95, 109, 0.16); color: var(--danger); }
+.contextmenu__icon { color: var(--fg-3); width: 12px; text-align: center; }
+.contextmenu__sep { height: 1px; margin: 4px 6px; background: var(--line); }

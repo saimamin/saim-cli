@@ -1,0 +1,16 @@
+node_modules/
+dist/
+prebuild-src/
+*.log
+.DS_Store
+
+# Signing keys & build intermediates (never commit private keys)
+android/saim.keystore
+*.keystore
+android/build/
+
+# Local settings / tokens (never commit credentials)
+*.local.json
+.env
+.env.*
+preview-settings.json

@@ -1,0 +1,40 @@
+/* ==========================================================================
+   Saim CLI - status bar
+   ========================================================================== */
+
+.statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--statusbar-h);
+    padding: 0 10px;
+    background: var(--bg-2);
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--fg-2);
+}
+
+.status__left, .status__right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.status__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+}
+.status__item.is-clickable { cursor: pointer; }
+.status__item.is-clickable:hover { color: var(--accent); }
+
+.status__branch { color: var(--accent); }
+.status__branch.is-dirty { color: var(--warn); }
+.status__branch.is-off { color: var(--fg-3); }
+.status__item--muted { color: var(--fg-3); }

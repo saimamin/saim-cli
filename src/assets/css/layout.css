@@ -1,0 +1,94 @@
+/* ==========================================================================
+   Saim CLI - application layout
+   ========================================================================== */
+
+.app {
+    display: grid;
+    grid-template-rows: var(--titlebar-h) 1fr var(--statusbar-h);
+    height: 100vh;
+    background:
+        radial-gradient(1200px 620px at 12% -12%, rgba(49, 224, 198, 0.07), transparent 62%),
+        radial-gradient(1000px 560px at 96% 8%, rgba(74, 168, 255, 0.06), transparent 60%),
+        var(--bg-1);
+}
+
+.workbench {
+    display: grid;
+    /* Keep the terminal usable on narrower windows: shrink the side panels first. */
+    grid-template-columns: minmax(0, var(--sidebar-w)) minmax(240px, 1fr) 0px;
+    min-height: 0;
+    transition: grid-template-columns 0.18s ease;
+}
+
+.workbench.no-sidebar { grid-template-columns: minmax(0, 0px) minmax(240px, 1fr) 0px; }
+.workbench.with-dock { grid-template-columns: minmax(0, var(--sidebar-w)) minmax(240px, 1fr) minmax(260px, var(--dock-w)); }
+.workbench.no-sidebar.with-dock { grid-template-columns: minmax(0, 0px) minmax(240px, 1fr) minmax(260px, var(--dock-w)); }
+
+@media (max-width: 1180px) {
+    :root { --sidebar-w: 210px; --dock-w: clamp(300px, 38vw, 400px); }
+}
+@media (max-width: 920px) {
+    :root { --sidebar-w: 190px; --dock-w: 300px; }
+}
+
+/* ------------------------------- center -------------------------------- */
+
+.center {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    border-left: 1px solid var(--line-soft);
+    border-right: 1px solid var(--line-soft);
+    background: var(--bg-0);
+}
+
+.terminals {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.empty-state {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    color: var(--fg-2);
+    pointer-events: none;
+    z-index: 0;
+}
+.empty-state h1 {
+    margin: 6px 0 0;
+    font-size: 26px;
+    letter-spacing: 6px;
+    font-weight: 300;
+    color: var(--fg-1);
+}
+.empty-state p { margin: 0; font-size: 12px; }
+.empty-state__logo {
+    width: 74px;
+    height: 74px;
+    border-radius: 18px;
+    border: 1px solid var(--accent-line);
+    background:
+        linear-gradient(135deg, rgba(49, 224, 198, 0.22), rgba(74, 168, 255, 0.08)),
+        var(--bg-2);
+    box-shadow: 0 0 44px rgba(49, 224, 198, 0.18) inset;
+    position: relative;
+}
+.empty-state__logo::after {
+    content: "";
+    position: absolute;
+    inset: 22px 20px;
+    border-left: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: skewX(-16deg) rotate(-2deg);
+    box-shadow: 12px 12px 0 -1px var(--accent-2);
+}

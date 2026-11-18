@@ -1,0 +1,229 @@
+/* ==========================================================================
+   Saim CLI - base layer: tokens, reset, primitives
+   ========================================================================== */
+
+@font-face {
+    font-family: "Fira Code";
+    src: url("../fonts/fira_code.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Fira Mono";
+    src: url("../fonts/fira_mono.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: "United Sans";
+    src: url("../fonts/united_sans_light.woff2") format("woff2");
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: "United Sans";
+    src: url("../fonts/united_sans_medium.woff2") format("woff2");
+    font-weight: 500;
+    font-display: swap;
+}
+
+:root {
+    /* Apple-inspired design tokens (default light) */
+    --bg-0: #f5f5f7;
+    --bg-1: #ffffff;
+    --bg-2: #f5f5f7;
+    --bg-3: #eaeaef;
+    --bg-4: #e2e2e8;
+    --line: rgba(0,0,0,0.12);
+    --line-soft: rgba(0,0,0,0.07);
+
+    --fg-0: #1d1d1f;
+    --fg-1: #3a3a3c;
+    --fg-2: #6e6e73;
+    --fg-3: #86868b;
+
+    --accent: #0071e3;
+    --accent-dim: rgba(0,113,227,0.10);
+    --accent-line: rgba(0,113,227,0.35);
+    --accent-2: #0a84ff;
+
+    --danger: #ff3b30;
+    --warn: #ff9500;
+    --ok: #34c759;
+
+    --radius: 18px;
+    --radius-sm: 12px;
+    --titlebar-h: 44px;
+    --statusbar-h: 28px;
+    --sidebar-w: 260px;
+    --dock-w: 400px;
+
+    --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Segoe UI", Roboto, Ubuntu, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    --shadow-lg: 0 24px 70px rgba(0,0,0,0.16);
+    --shadow-md: 0 10px 30px rgba(0,0,0,0.10);
+    --shadow-sm: 0 4px 14px rgba(0,0,0,0.08);
+    --glass-bg: rgba(245,245,247,0.72);
+    --glass-bg-strong: rgba(255,255,255,0.78);
+    --glass-border: rgba(0,0,0,0.08);
+
+    --ui-scale: 100;
+
+    color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-1);
+    color: var(--fg-0);
+    font-family: var(--font-ui);
+    font-size: calc(14px * var(--ui-scale));
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+}
+
+body { cursor: default; }
+
+::selection { background: var(--accent-line); color: #04120f; }
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: var(--bg-3);
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--bg-4); background-clip: padding-box; }
+
+button {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+input, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+kbd {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--bg-3);
+    color: var(--fg-1);
+}
+
+/* ------------------------------ primitives ------------------------------ */
+
+.iconbtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    color: var(--fg-2);
+    transition: background 0.12s ease, color 0.12s ease;
+}
+.iconbtn:hover { background: var(--bg-3); color: var(--accent); }
+.iconbtn.is-active { background: var(--accent-dim); color: var(--accent); }
+
+.minibtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 21px;
+    min-width: 21px;
+    padding: 0 6px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    color: var(--fg-2);
+    border: 1px solid transparent;
+    transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.minibtn:hover { background: var(--bg-4); color: var(--fg-0); border-color: var(--line); }
+
+.ghostbtn {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg-0);
+    border: 1px solid var(--line);
+    background: var(--bg-1);
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.ghostbtn:hover { background: var(--bg-3); border-color: rgba(0,0,0,0.18); color: var(--fg-0); }
+
+.primarybtn {
+    height: 32px;
+    padding: 0 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+    color: #ffffff;
+    background: var(--accent);
+    box-shadow: 0 8px 20px var(--accent-dim);
+    transition: filter 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.primarybtn:hover { filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 10px 26px var(--accent-dim); }
+.primarybtn:active { transform: translateY(0); }
+
+.tag {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--fg-2);
+}
+
+/* -------------------------------- toasts -------------------------------- */
+
+.toast-stack {
+    position: fixed;
+    right: 16px;
+    bottom: calc(var(--statusbar-h) + 14px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 900;
+    pointer-events: none;
+}
+
+.toast {
+    min-width: 220px;
+    max-width: 380px;
+    padding: 9px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    background: var(--bg-3);
+    box-shadow: var(--shadow-md);
+    font-size: 12px;
+    color: var(--fg-0);
+    animation: toast-in 0.18s ease;
+}
+.toast--error { border-left-color: var(--danger); }
+.toast--warn { border-left-color: var(--warn); }
+.toast--ok { border-left-color: var(--ok); }
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateX(14px); }
+    to { opacity: 1; transform: translateX(0); }
+}
