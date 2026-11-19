@@ -13,4 +13,5 @@ android/build/
 *.local.json
 .env
 .env.*
+!.env.example
 preview-settings.json

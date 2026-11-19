@@ -124,6 +124,11 @@ window.Saim = window.Saim || {};
         if (avatar) avatar.addEventListener("click", () => Saim.nav.go("preferences"));
         const spSettings = document.getElementById("sp-settings");
         if (spSettings) spSettings.addEventListener("click", () => Saim.nav.go("preferences"));
+        const signOut = document.getElementById("sp-signout");
+        if (signOut) signOut.addEventListener("click", async () => {
+            await fetch("/api/auth/logout", { method: "POST" });
+            location.href = "/login";
+        });
 
         const prefsSearch = document.querySelector(".prefs__search input");
         if (prefsSearch) {

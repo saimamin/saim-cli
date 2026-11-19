@@ -20,6 +20,7 @@ const { spawn, execFile, exec } = require("child_process");
 const { URL } = require("url");
 const devops = require("../src/lib/devops");
 const r2 = require("../src/lib/r2");
+const auth = require("../src/lib/auth");
 
 const ROOT = path.join(__dirname, "..");
 const PORT = Number((process.argv.find(a => a.startsWith("--port=")) || "").split("=")[1] || 3000);
@@ -273,6 +274,22 @@ function safeJoin(root, relative) {
 
 async function handleApi(req, res, url) {
     const route = url.pathname.replace(/^\/api/, "");
+
+    /* ------------------------------- auth ------------------------------- */
+    if (route === "/auth/status") {
+        return sendJson(res, { enabled: auth.config.enabled, authenticated: auth.isAuthenticated(req) });
+    }
+    if (route === "/auth/login" && req.method === "POST") {
+        const body = await readBody(req);
+        const token = auth.login(body.username, body.password);
+        if (!token) return sendJson(res, { ok: false, error: "Incorrect username or password." }, 401);
+        res.setHeader("Set-Cookie", auth.cookieHeader(token));
+        return sendJson(res, { ok: true });
+    }
+    if (route === "/auth/logout") {
+        res.setHeader("Set-Cookie", auth.clearCookieHeader());
+        return sendJson(res, { ok: true });
+    }
 
     if (route === "/settings" && req.method === "GET") return sendJson(res, settings);
     if (route === "/settings" && req.method === "POST") {
@@ -627,6 +644,21 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, `http://localhost:${PORT}`);
 
     try {
+        // Auth endpoints are public; everything else requires a session.
+        if (url.pathname.startsWith("/api/auth/")) {
+            return await handleApi(req, res, url);
+        }
+        if (url.pathname === "/login") {
+            return sendFile(res, path.join(__dirname, "login.html"));
+        }
+        if (!auth.isAuthenticated(req)) {
+            if (url.pathname.startsWith("/api/")) {
+                return sendJson(res, { error: "Unauthorized" }, 401);
+            }
+            res.writeHead(302, { Location: "/login" });
+            return res.end();
+        }
+
         if (url.pathname.startsWith("/api/")) {
             return await handleApi(req, res, url);
         }

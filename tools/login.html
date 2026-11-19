@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>Sign in · Saim CLI</title>
+<style>
+  :root{
+    --bg:#08080a;--panel:#141416;--card:#17171a;--line:#26262b;
+    --fg:#e9e9ee;--muted:#7d7d87;--accent:#4c8dff;--radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background:var(--bg);color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Ubuntu,sans-serif;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .card{
+    width:100%;max-width:380px;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);padding:32px 28px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .mark{
+    width:28px;height:28px;border-radius:8px;flex:none;
+    background:linear-gradient(140deg,var(--accent),#2f6ee0);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);position:relative;
+  }
+  .mark::after{content:"";position:absolute;left:8px;top:8px;width:9px;height:9px;
+    border-left:2px solid #fff;border-bottom:2px solid #fff;transform:skewX(-18deg)}
+  h1{font-size:17px;font-weight:600;margin:0;letter-spacing:-.01em}
+  .sub{font-size:12.5px;color:var(--muted);margin:0 0 24px;line-height:1.55}
+  label{display:block;font-size:11px;color:var(--muted);margin:0 0 6px}
+  input{
+    width:100%;height:40px;padding:0 12px;margin:0 0 14px;
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    color:var(--fg);font-size:13px;font-family:inherit;outline:none;
+  }
+  input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(76,141,255,.18)}
+  button{
+    width:100%;height:40px;border:none;border-radius:10px;cursor:pointer;
+    background:var(--accent);color:#fff;font-size:13px;font-weight:600;font-family:inherit;
+    transition:filter .15s ease;
+  }
+  button:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.6;cursor:default}
+  .err{display:none;color:#ff8080;font-size:12px;margin:0 0 14px;line-height:1.5}
+  .foot{margin-top:20px;font-size:10.5px;color:#55555f;text-align:center}
+</style>
+</head>
+<body>
+  <form class="card" id="form">
+    <div class="brand"><span class="mark" aria-hidden="true"></span><h1>Saim CLI</h1></div>
+    <p class="sub">Sign in to continue to your workspace. Your session is kept in this browser.</p>
+    <label for="u">Username</label>
+    <input id="u" name="username" autocomplete="username" required autofocus />
+    <label for="p">Password</label>
+    <input id="p" name="password" type="password" autocomplete="current-password" required />
+    <p class="err" id="err"></p>
+    <button type="submit" id="btn">Sign in</button>
+    <div class="foot">Credentials are stored locally in <code>.env</code></div>
+  </form>
+<script>
+(function(){
+  "use strict";
+  var form=document.getElementById('form'), err=document.getElementById('err'), btn=document.getElementById('btn');
+  form.addEventListener('submit',async function(e){
+    e.preventDefault(); err.style.display='none'; btn.disabled=true; btn.textContent='Signing in…';
+    try{
+      var res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username:document.getElementById('u').value,password:document.getElementById('p').value})});
+      var data=await res.json().catch(function(){return {}});
+      if(res.ok && data.ok){ location.href='/src/ui.html'; return; }
+      err.textContent=(data && data.error)||'Incorrect username or password.'; err.style.display='block';
+    }catch(ex){ err.textContent='Could not reach the server.'; err.style.display='block'; }
+    finally{ btn.disabled=false; btn.textContent='Sign in'; }
+  });
+})();
+</script>
+</body>
+</html>
