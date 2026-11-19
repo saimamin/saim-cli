@@ -445,6 +445,8 @@
                     </button>
                 </div>
 
+                <div class="ctx" id="context-body" hidden></div>
+
                 <div class="sp__rows" id="ws-rows">
                     <button class="sp__row wstab" data-ws="review">
                         <span class="sp__rowicon">
@@ -493,6 +495,13 @@
                             <svg viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M8 1.9v1.5M8 12.6v1.5M14.1 8h-1.5M3.4 8H1.9M12.3 3.7l-1 1M4.7 11.3l-1 1M12.3 12.3l-1-1M4.7 4.7l-1-1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
                         </span>
                         <span class="sp__rowlabel">Preferences</span>
+                    </button>
+
+                    <button class="sp__row" data-nav="context">
+                        <span class="sp__rowicon">
+                            <svg viewBox="0 0 16 16" width="16" height="16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M8 4.6v3.6l2.4 1.4" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+                        </span>
+                        <span class="sp__rowlabel">Context</span>
                     </button>
 
                     <button class="sp__row" data-nav="github">
@@ -587,6 +596,7 @@
     <script src="js/components/monitors.js"></script>
     <script src="js/components/dock.js"></script>
     <script src="js/components/statusbar.js"></script>
+    <script src="js/components/context.js"></script>
     <script src="js/components/home.js"></script>
     <script src="js/components/preferences.js"></script>
     <script src="js/components/palette.js"></script>

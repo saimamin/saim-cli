@@ -18,6 +18,7 @@ window.Saim = window.Saim || {};
         browser: "Browser",
         github: "GitHub",
         hosting: "Hosting",
+        context: "Context",
         preferences: "Preferences"
     };
     const WORKSPACE_VIEWS = ["file", "terminal", "review", "browser"];
@@ -100,6 +101,7 @@ window.Saim = window.Saim || {};
         const active = (state.sessions || []).find(session => session.id === state.activeSessionId);
         const defs = [
             { view: "session", label: active ? (active.title || "Session") : "Session" },
+            { view: "context", label: "Context" },
             { view: "home", label: "Home" },
             { view: "review", label: "Review" },
             { view: "browser", label: "Browser" },
@@ -139,11 +141,14 @@ window.Saim = window.Saim || {};
      */
     function go(view, opts) {
         opts = opts || {};
+        const PANEL_VIEWS = ["context"]; // views that live in the right panel, not the stage
         const panes = Array.from(document.querySelectorAll(".stage > .pane"));
-        if (!panes.some(pane => pane.dataset.pane === view)) view = "home";
+        if (!PANEL_VIEWS.includes(view) && !panes.some(pane => pane.dataset.pane === view)) view = "home";
         Saim.state.view = view;
 
-        panes.forEach(pane => pane.classList.toggle("is-active", pane.dataset.pane === view));
+        // Context is a right-panel view: leave the session showing in the stage.
+        const stagePane = PANEL_VIEWS.includes(view) ? "session" : view;
+        panes.forEach(pane => pane.classList.toggle("is-active", pane.dataset.pane === stagePane));
 
         document.querySelectorAll(".sb__link[data-nav], .sb__tool[data-nav]").forEach(el => {
             el.classList.toggle("is-active", el.dataset.nav === view);
@@ -152,6 +157,10 @@ window.Saim = window.Saim || {};
             const target = el.dataset.ws || el.dataset.nav;
             el.classList.toggle("is-active", target === view && target !== "session");
         });
+        const ctxBody = document.getElementById("context-body");
+        const rowsEl = document.getElementById("ws-rows");
+        if (ctxBody) ctxBody.hidden = view !== "context";
+        if (rowsEl) rowsEl.hidden = view === "context";
         document.querySelectorAll(".sptab").forEach(el => {
             const target = el.dataset.view;
             if (target) el.classList.toggle("is-active", target === view);
@@ -174,11 +183,17 @@ window.Saim = window.Saim || {};
             Saim.workspace.show(view, { fromNav: true, keepChat: true });
         }
 
-        // On compact widths the panel is a sheet: close it after picking a view.
-        if (COMPACT() && (opts.skipWorkspace || !WORKSPACE_VIEWS.includes(view))) {
+        // On compact widths the panel is a sheet. Context lives in that panel,
+        // so open it there; other stage views tuck the sheet away.
+        if (COMPACT()) {
             const app = document.getElementById("app");
-            if (app) app.classList.remove("panel-open");
-            Saim.state.panelOpen = false;
+            if (view === "context") {
+                if (app) app.classList.add("panel-open");
+                Saim.state.panelOpen = true;
+            } else if (opts.skipWorkspace || !WORKSPACE_VIEWS.includes(view)) {
+                if (app) app.classList.remove("panel-open");
+                Saim.state.panelOpen = false;
+            }
             syncOverlayState();
         }
 
@@ -347,6 +362,7 @@ window.Saim = window.Saim || {};
         Saim.dock.init();
         Saim.statusbar.init();
         Saim.home.init();
+        Saim.context.init();
         Saim.prefs.init();
         Saim.bus.on("opencode:render", updateTitle);
         Saim.palette.init();
