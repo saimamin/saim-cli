@@ -25,6 +25,7 @@ keyboard shortcuts. A browser preview of the same UI runs at
 | **Action panel** | Large action rows with shortcuts: Review (`Ctrl+Alt+R`), Browser (`Ctrl+Alt+B`), Open file (`Ctrl+Alt+P`), Terminal (`Ctrl+Alt+T`), plus New session, Preferences, GitHub and Hosting. |
 | **GitHub** | Personal-access-token auth; fetch, pull, push; incoming/recent commits; local git status and error log. |
 | **Hosting** | Vercel + Netlify: token or deploy hook, project/site picker, deploy + result link, and a **Domains & DNS** card listing domains, DNS status and DNS records. |
+| **Context** | Right-panel inspector with real session stats: provider, model, context limit, token usage, cost, timestamps, expandable raw messages and session export. |
 | **Preferences** | Interface layout (Top tabs / Side tabs / Inbox), language, default environment, auto-accept permissions, show agent, follow-up behavior, theme and status bar. |
 | **Command palette** | Fuzzy search over every command and over workspace files. |
 | **Status bar** | Optional git branch, working directory, foreground process, assistant state, CPU/RAM/NET and clock. |
@@ -76,6 +77,7 @@ Preview settings and tokens are stored in
 | `Ctrl+Alt+T` | Terminal |
 | `Ctrl+Alt+N` | New session |
 | `Ctrl+Alt+S` | Preferences |
+| Context row (right panel) | Session context inspector |
 | `Ctrl+B` | Toggle the session sidebar |
 | `Ctrl+Shift+P` | Command palette |
 | `Ctrl+Shift+T` / `Ctrl+W` | New / close terminal tab |
