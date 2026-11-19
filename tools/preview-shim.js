@@ -99,6 +99,17 @@
         "hosting:vercelDeploy": payload => post("/api/hosting/vercel/deploy", payload),
         "hosting:netlifySites": payload => get(`/api/hosting/netlify/sites?${query(payload)}`),
         "hosting:netlifyDeploy": payload => post("/api/hosting/netlify/deploy", payload),
+        "hosting:vercelDomains": payload => get(`/api/hosting/vercel/domains?${query(payload)}`),
+        "hosting:vercelDns": payload => get(`/api/hosting/vercel/dns?${query(payload)}`),
+        "hosting:netlifyDomains": payload => get(`/api/hosting/netlify/domains?${query(payload)}`),
+        "hosting:netlifyDns": payload => get(`/api/hosting/netlify/dns?${query(payload)}`),
+
+        "r2:buckets": payload => post("/api/r2/buckets", payload),
+        "r2:create": payload => post("/api/r2/create", payload),
+        "r2:objects": payload => post("/api/r2/objects", payload),
+        "r2:delete": payload => post("/api/r2/delete", payload),
+        "r2:presign": payload => post("/api/r2/presign", payload),
+        "r2:backup": payload => post("/api/r2/backup", payload),
 
         "shell:which": payload => get(`/api/shell/which?${query(payload)}`),
         "shell:run": payload => post("/api/shell/run", payload),

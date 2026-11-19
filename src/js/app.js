@@ -42,6 +42,14 @@ window.Saim = window.Saim || {};
     function setSidebar(open) {
         Saim.state.sidebarOpen = open;
         applySidebarClasses();
+        const app = document.getElementById("app");
+        // Sheets are mutually exclusive on compact screens.
+        if (COMPACT() && open && app) {
+            app.classList.remove("panel-open");
+            Saim.state.panelOpen = false;
+            const pb = document.getElementById("btn-panel");
+            if (pb) pb.classList.remove("is-active");
+        }
         const btn = document.getElementById("btn-sessions");
         if (btn) btn.classList.toggle("is-active", open);
         syncOverlayState();
@@ -54,6 +62,12 @@ window.Saim = window.Saim || {};
         if (!app) return;
         if (COMPACT()) {
             app.classList.toggle("panel-open", open);
+            if (open) {
+                app.classList.remove("sidebar-open");
+                Saim.state.sidebarOpen = false;
+                const sb = document.getElementById("btn-sessions");
+                if (sb) sb.classList.remove("is-active");
+            }
         } else {
             app.classList.toggle("panel-hidden", !open);
         }
@@ -186,16 +200,29 @@ window.Saim = window.Saim || {};
             Saim.workspace.show(view, { fromNav: true, keepChat: true });
         }
 
-        // On compact widths the panel is a sheet. Context lives in that panel,
-        // so open it there; other stage views tuck the sheet away.
+        // On compact widths both side panels are sheets. After picking a view
+        // from the sidebar, close it; Context opens the right sheet.
         if (COMPACT()) {
             const app = document.getElementById("app");
             if (view === "context") {
                 if (app) app.classList.add("panel-open");
                 Saim.state.panelOpen = true;
-            } else if (opts.skipWorkspace || !WORKSPACE_VIEWS.includes(view)) {
+                const pb = document.getElementById("btn-panel");
+                if (pb) pb.classList.add("is-active");
+                if (app) app.classList.remove("sidebar-open");
+                Saim.state.sidebarOpen = false;
+                const sb = document.getElementById("btn-sessions");
+                if (sb) sb.classList.remove("is-active");
+            } else {
+                // Any stage/nav view closes both sheets so the content is visible.
+                if (app) app.classList.remove("sidebar-open");
+                Saim.state.sidebarOpen = false;
+                const sb = document.getElementById("btn-sessions");
+                if (sb) sb.classList.remove("is-active");
                 if (app) app.classList.remove("panel-open");
                 Saim.state.panelOpen = false;
+                const pb = document.getElementById("btn-panel");
+                if (pb) pb.classList.remove("is-active");
             }
             syncOverlayState();
         }

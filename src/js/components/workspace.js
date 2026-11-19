@@ -243,6 +243,11 @@ window.Saim = window.Saim || {};
         opts = opts || {};
         const url = normalizeUrl(raw);
         if (!url) return;
+        // Ensure the browser pane is active when navigating from elsewhere.
+        if (state.pane !== "browser" && !opts.fromHistory) {
+            if (Saim.nav && Saim.nav.go) Saim.nav.go("browser");
+            else show("browser", { skipNav: true });
+        }
         const frame = document.getElementById("browser-frame");
         const start = document.getElementById("browser-start");
         const input = document.getElementById("browser-url");
