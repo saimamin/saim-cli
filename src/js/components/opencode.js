@@ -94,11 +94,11 @@ window.Saim = window.Saim || {};
                 await refreshAll();
             } else {
                 setStatus(res && res.error ? res.error : "connection failed", "error");
-                Saim.toast("Could not connect to the OpenCode server", "error");
+                Saim.toast("Could not connect to the assistant server", "error");
             }
         } catch (err) {
             setStatus(err && err.message ? err.message : "connection failed", "error");
-            Saim.toast("Could not connect to the OpenCode server", "error");
+            Saim.toast("Could not connect to the assistant server", "error");
         } finally {
             render();
         }
@@ -365,8 +365,8 @@ window.Saim = window.Saim || {};
         const dot = H.el("span", `dot ${state.connected ? (state.sending ? "is-busy" : "is-on") : ""}`);
         title.appendChild(dot);
         title.appendChild(H.el("span", null, state.connected
-            ? `OpenCode · v${state.version || "?"}`
-            : "OpenCode · not connected"));
+            ? `Saim CLI · v${state.version || "?"}`
+            : "Saim CLI · not connected"));
         header.appendChild(title);
 
         const pills = H.el("div", "oc__pills");
@@ -436,10 +436,10 @@ window.Saim = window.Saim || {};
         const wrap = H.el("div", "oc-empty");
         const card = H.el("div", "opencode__card");
         card.style.width = "100%";
-        card.appendChild(H.el("h3", null, "OpenCode"));
+        card.appendChild(H.el("h3", null, "Saim CLI"));
         card.appendChild(H.el("p", null, state.connecting
-            ? "Connecting to the OpenCode server…"
-            : "No OpenCode server is connected. Start the background service, or connect manually."));
+            ? "Connecting to the assistant server…"
+            : "No assistant server is connected. Start the background service, or connect manually."));
 
         const actions = H.el("div", "oc__pills");
         const discoverBtn = H.el("button", "primarybtn", state.connecting ? "Connecting…" : "Discover server");
@@ -450,7 +450,7 @@ window.Saim = window.Saim || {};
         const manual = H.el("button", "ghostbtn", "Connect manually");
         manual.addEventListener("click", () => {
             Saim.modal.open({
-                title: "Connect to OpenCode",
+                title: "Connect to assistant",
                 size: "sm",
                 body: (body) => {
                     const wrap = H.el("div", "oc-connect");
@@ -948,7 +948,7 @@ window.Saim = window.Saim || {};
     function renderPair() {
         const wrap = H.el("div", "oc-pair");
         wrap.appendChild(H.el("h3", null, "Pair a device"));
-        wrap.appendChild(H.el("p", null, "Generate a pairing code and open the OpenCode app on your phone or browser. The code expires in 5 minutes."));
+        wrap.appendChild(H.el("p", null, "Generate a pairing code and open the Saim CLI app on your phone or browser. The code expires in 5 minutes."));
 
         if (state.pairing) {
             wrap.appendChild(H.el("div", "oc-pair__code", state.pairing.code));
