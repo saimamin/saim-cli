@@ -376,6 +376,8 @@ window.Saim = window.Saim || {};
         const settings = await Saim.bridge.getSettings();
         const info = await Saim.bridge.appInfo();
         Saim.state.info = info || {};
+        // Set cwd before components init so git/status/explorer read the right folder.
+        Saim.state.cwd = (settings && settings.cwd) || Saim.state.cwd;
         applySettings(settings || {});
 
         const version = document.getElementById("brand-version");
@@ -525,7 +527,6 @@ window.Saim = window.Saim || {};
         });
 
         // Workspace
-        Saim.state.cwd = (settings && settings.cwd) || Saim.state.cwd;
         setStatusbar(settings.showStatusbar === true);
 
         // Restore the previous session

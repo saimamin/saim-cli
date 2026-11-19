@@ -206,20 +206,21 @@ window.Saim = window.Saim || {};
             return;
         }
         commits.forEach(c => {
+            const subject = c.subject || c.message || "(no message)";
             const btn = H.el("button", "pitem");
             btn.type = "button";
-            btn.appendChild(H.el("span", "pitem__avatar", letterOf(c.message)));
-            const name = H.el("span", "pitem__name", c.message || "(no message)");
-            btn.appendChild(name);
+            btn.appendChild(H.el("span", "pitem__avatar", letterOf(subject)));
+            btn.appendChild(H.el("span", "pitem__name", subject));
             const meta = H.el("span", "pitem__proj");
             const parts = [];
             if (c.author) parts.push(c.author);
-            if (c.time) parts.push(formatTime(c.time));
+            if (c.when) parts.push(c.when);
             meta.textContent = parts.join(" · ");
             btn.appendChild(meta);
-            btn.title = `${c.message}\n${c.author || ""} · ${c.time || ""}`;
+            btn.title = `${subject}\n${c.hash || ""} · ${c.author || ""}`;
             btn.addEventListener("click", () => {
-                if (c.file) Saim.commands.run("file:open", { path: c.file });
+                navigator.clipboard && navigator.clipboard.writeText(c.hash || "");
+                Saim.toast(`Commit ${c.hash || ""} copied`, "ok");
             });
             host.appendChild(btn);
         });
