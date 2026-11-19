@@ -320,6 +320,25 @@ select.gh__input { padding: 0 6px; }
 .gh__dns-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gh__dns-type { color: var(--fg-2); flex: none; }
 
+/* ---- cloudflare r2 ---- */
+.r2__path, .r2__obj {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--bg-3);
+    font-size: 11.5px;
+    color: var(--fg-1);
+}
+.r2__path + .r2__path, .r2__obj + .r2__obj { margin-top: 5px; }
+.r2__path-name, .r2__obj-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.r2__obj-name { font-family: var(--font-mono); font-size: 11px; }
+.r2__obj-size { flex: none; color: var(--fg-3); font-size: 10.5px; }
+.r2__path .minibtn, .r2__obj .minibtn { flex: none; }
+
 .gh__repo { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .gh__branch {
     font-family: var(--font-mono);

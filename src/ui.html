@@ -99,6 +99,10 @@
                         <svg viewBox="0 0 16 16" width="15" height="15"><path d="M8 2.2 13.4 12H2.6L8 2.2z" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linejoin="round"/></svg>
                         <span>Hosting</span>
                     </button>
+                    <button class="sb__tool" data-nav="r2" title="Cloudflare R2 — backup &amp; restore">
+                        <svg viewBox="0 0 16 16" width="15" height="15"><path d="M2.2 5.2 8 2l5.8 3.2v5.6L8 14l-5.8-3.2z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M2.4 5.4 8 8.2l5.6-2.8M8 8.2V14" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+                        <span>R2 Backup</span>
+                    </button>
                 </div>
 
                 <button class="sb__avatar" id="sb-avatar" title="Preferences">S</button>
@@ -296,6 +300,17 @@
                             <p>Ship this project with Vercel or Netlify. Add a token or a deploy hook to start.</p>
                         </header>
                         <div class="page__body" id="hosting-pane"></div>
+                    </div>
+                </div>
+
+                <!-- CLOUDFLARE R2 -->
+                <div class="pane ws__pane" data-pane="r2">
+                    <div class="page">
+                        <header class="page__head">
+                            <h1>Cloudflare R2</h1>
+                            <p>Store backups of your projects in an R2 bucket. Add your Cloudflare credentials, then back up or restore folders.</p>
+                        </header>
+                        <div class="page__body" id="r2-pane"></div>
                     </div>
                 </div>
 
@@ -517,6 +532,13 @@
                         </span>
                         <span class="sp__rowlabel">Hosting</span>
                     </button>
+
+                    <button class="sp__row" data-nav="r2">
+                        <span class="sp__rowicon">
+                            <svg viewBox="0 0 16 16" width="16" height="16"><path d="M2.2 5.2 8 2l5.8 3.2v5.6L8 14l-5.8-3.2z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/><path d="M2.4 5.4 8 8.2l5.6-2.8M8 8.2V14" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span class="sp__rowlabel">R2 Backup</span>
+                    </button>
                 </div>
 
                 <div class="sp__foot">
@@ -596,6 +618,7 @@
     <script src="js/components/monitors.js"></script>
     <script src="js/components/dock.js"></script>
     <script src="js/components/statusbar.js"></script>
+    <script src="js/components/r2.js"></script>
     <script src="js/components/context.js"></script>
     <script src="js/components/home.js"></script>
     <script src="js/components/preferences.js"></script>

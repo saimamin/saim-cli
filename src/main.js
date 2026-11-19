@@ -22,6 +22,7 @@ const { execFile, exec } = require("child_process");
 const pty = require("node-pty");
 const { OpencodeManager } = require("./opencode/manager");
 const devops = require("./lib/devops");
+const r2 = require("./lib/r2");
 
 let si;
 let ocManager = null;
@@ -63,6 +64,13 @@ const DEFAULTS = {
     autoAcceptPermissions: false,
     showAgent: true,
     followUpBehavior: "queue",
+    // Cloudflare R2 backup
+    r2AccountId: "",
+    r2AccessKeyId: "",
+    r2SecretKey: "",
+    r2Bucket: "",
+    r2Prefix: "backups",
+    r2BackupPaths: [],
     // Behaviour
     bellSound: false,
     confirmClose: true,
@@ -697,6 +705,12 @@ function registerIpc() {
     ipcMain.handle("hosting:vercelDns", (_e, opts = {}) => devops.vercelDnsRecords(opts));
     ipcMain.handle("hosting:netlifyDomains", (_e, opts = {}) => devops.netlifyDomains(opts));
     ipcMain.handle("hosting:netlifyDns", (_e, opts = {}) => devops.netlifyDnsRecords(opts));
+    ipcMain.handle("r2:buckets", (_e, opts = {}) => r2.listBuckets(opts));
+    ipcMain.handle("r2:create", (_e, opts = {}) => r2.createBucket(opts));
+    ipcMain.handle("r2:objects", (_e, opts = {}) => r2.listObjects(opts));
+    ipcMain.handle("r2:delete", (_e, opts = {}) => r2.deleteObject(opts));
+    ipcMain.handle("r2:presign", (_e, opts = {}) => r2.presign(opts, opts.key, opts.expires || 3600));
+    ipcMain.handle("r2:backup", (_e, opts = {}) => r2.backup(opts));
 
     // Shell helpers
     ipcMain.handle("shell:which", async (_e, { cmd }) => {

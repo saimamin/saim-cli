@@ -24,6 +24,7 @@ keyboard shortcuts. A browser preview of the same UI runs at
 | **Workspace** | Four views: **Open file** (explorer + editor), **Terminal** (real PTYs via node-pty), **Review** (git status + colorized diff), **Browser** (iframe with URL bar and quick links). |
 | **Action panel** | Large action rows with shortcuts: Review (`Ctrl+Alt+R`), Browser (`Ctrl+Alt+B`), Open file (`Ctrl+Alt+P`), Terminal (`Ctrl+Alt+T`), plus New session, Preferences, GitHub and Hosting. |
 | **GitHub** | Personal-access-token auth; fetch, pull, push; incoming/recent commits; local git status and error log. |
+| **Cloudflare R2** | Backup & restore projects to an R2 bucket via the S3-compatible API (AWS SigV4): credentials, bucket create/list, folder backup (zip), object list, download and delete. |
 | **Hosting** | Vercel + Netlify: token or deploy hook, project/site picker, deploy + result link, and a **Domains & DNS** card listing domains, DNS status and DNS records. |
 | **Context** | Right-panel inspector with real session stats: provider, model, context limit, token usage, cost, timestamps, expandable raw messages and session export. |
 | **Preferences** | Interface layout (Top tabs / Side tabs / Inbox), language, default environment, auto-accept permissions, show agent, follow-up behavior, theme and status bar. |
@@ -78,6 +79,7 @@ Preview settings and tokens are stored in
 | `Ctrl+Alt+N` | New session |
 | `Ctrl+Alt+S` | Preferences |
 | Context row (right panel) | Session context inspector |
+| R2 Backup (sidebar tool / right panel) | Cloudflare R2 backup page |
 | `Ctrl+B` | Toggle the session sidebar |
 | `Ctrl+Shift+P` | Command palette |
 | `Ctrl+Shift+T` / `Ctrl+W` | New / close terminal tab |
@@ -162,7 +164,7 @@ media/                    Application icons
 - **Electron**: `~/.config/Saim CLI/settings.json` and `state.json`.
 - **Preview**: `~/.config/saim-cli/preview-settings.json`.
 - Both are edited from the in-app settings/preferences UI. GitHub/Vercel/Netlify
-  tokens are stored locally in these files (plain text) — never commit them.
+  tokens and R2 secret keys are stored locally in these files (plain text) — never commit them.
 
 ## Credits & licence
 

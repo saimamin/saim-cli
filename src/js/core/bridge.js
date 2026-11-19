@@ -84,6 +84,12 @@ window.Saim = window.Saim || {};
         hostingVercelDns: opts => call("hosting:vercelDns", opts),
         hostingNetlifyDomains: opts => call("hosting:netlifyDomains", opts),
         hostingNetlifyDns: opts => call("hosting:netlifyDns", opts),
+        r2Buckets: opts => call("r2:buckets", opts),
+        r2CreateBucket: opts => call("r2:create", opts),
+        r2Objects: opts => call("r2:objects", opts),
+        r2Delete: opts => call("r2:delete", opts),
+        r2Presign: opts => call("r2:presign", opts),
+        r2Backup: opts => call("r2:backup", opts),
 
         which: cmd => call("shell:which", { cmd }),
         run: (cmd, cwd) => call("shell:run", { cmd, cwd }),

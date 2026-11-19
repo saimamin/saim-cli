@@ -19,6 +19,7 @@ window.Saim = window.Saim || {};
         github: "GitHub",
         hosting: "Hosting",
         context: "Context",
+        r2: "R2 Backup",
         preferences: "Preferences"
     };
     const WORKSPACE_VIEWS = ["file", "terminal", "review", "browser"];
@@ -102,6 +103,7 @@ window.Saim = window.Saim || {};
         const defs = [
             { view: "session", label: active ? (active.title || "Session") : "Session" },
             { view: "context", label: "Context" },
+            { view: "r2", label: "R2 Backup" },
             { view: "home", label: "Home" },
             { view: "review", label: "Review" },
             { view: "browser", label: "Browser" },
@@ -177,6 +179,7 @@ window.Saim = window.Saim || {};
         if (view === "home" && Saim.home) Saim.home.render();
         if (view === "github" && Saim.github) Saim.github.render();
         if (view === "hosting" && Saim.hosting) Saim.hosting.render();
+        if (view === "r2" && Saim.r2) Saim.r2.render();
         if (view === "preferences" && Saim.prefs) Saim.prefs.sync();
 
         if (!opts.skipWorkspace && WORKSPACE_VIEWS.includes(view) && Saim.workspace) {
@@ -209,6 +212,7 @@ window.Saim = window.Saim || {};
             files: "file",
             github: "github",
             hosting: "hosting",
+            r2: "r2",
             sessions: "session",
             bookmarks: "home",
             home: "home",
@@ -363,6 +367,7 @@ window.Saim = window.Saim || {};
         Saim.statusbar.init();
         Saim.home.init();
         Saim.context.init();
+        Saim.r2.init();
         Saim.prefs.init();
         Saim.bus.on("opencode:render", updateTitle);
         Saim.palette.init();

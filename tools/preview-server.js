@@ -19,6 +19,7 @@ const os = require("os");
 const { spawn, execFile, exec } = require("child_process");
 const { URL } = require("url");
 const devops = require("../src/lib/devops");
+const r2 = require("../src/lib/r2");
 
 const ROOT = path.join(__dirname, "..");
 const PORT = Number((process.argv.find(a => a.startsWith("--port=")) || "").split("=")[1] || 3000);
@@ -96,7 +97,8 @@ function defaultSettings() {
         restoreTabs: true,
         opencodePath: "",
         opencodeAutoStart: false,
-        telemetry: true
+        telemetry: true,
+        r2AccountId: "", r2AccessKeyId: "", r2SecretKey: "", r2Bucket: "", r2Prefix: "backups", r2BackupPaths: []
     };
 }
 
@@ -498,6 +500,32 @@ async function handleApi(req, res, url) {
     }
     if (route === "/hosting/netlify/dns") {
         return guard(() => devops.netlifyDnsRecords({ token: url.searchParams.get("token"), zoneId: url.searchParams.get("zoneId") }))();
+    }
+
+    /* ------------------------------- cloudflare r2 ------------------------------- */
+    if (route === "/r2/buckets") {
+        const body = await readBody(req);
+        return guard(() => r2.listBuckets(body))();
+    }
+    if (route === "/r2/create") {
+        const body = await readBody(req);
+        return guard(() => r2.createBucket(body))();
+    }
+    if (route === "/r2/objects") {
+        const body = await readBody(req);
+        return guard(() => r2.listObjects(body))();
+    }
+    if (route === "/r2/delete") {
+        const body = await readBody(req);
+        return guard(() => r2.deleteObject(body))();
+    }
+    if (route === "/r2/presign") {
+        const body = await readBody(req);
+        return guard(() => r2.presign(body, body.key, body.expires || 3600))();
+    }
+    if (route === "/r2/backup") {
+        const body = await readBody(req);
+        return guard(() => r2.backup(body))();
     }
 
     if (route === "/oc/status") {
