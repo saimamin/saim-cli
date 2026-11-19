@@ -63,6 +63,22 @@ node tools/preview-server.js
 # open http://localhost:3000/src/ui.html
 ```
 
+#### Preview login (username / password)
+
+The preview server is protected by a self-hosted login. On first run it creates
+a `.env` file with a generated username/password (printed in the server log).
+Open any page and you'll be redirected to `/login`.
+
+```bash
+cat .env            # AUTH_USER / AUTH_PASS / AUTH_SECRET
+cp .env.example .env   # (optional) start from the template
+```
+
+Edit `.env`, restart the server, and sign in with those credentials. The session
+is a signed, HttpOnly cookie valid for 7 days; use **Sign out** in the workspace
+panel footer to end it. Set `AUTH_ENABLED=false` in `.env` to disable login.
+`.env` is gitignored — never commit your credentials.
+
 Preview settings and tokens are stored in
 `~/.config/saim-cli/preview-settings.json` (gitignored — never commit tokens).
 
